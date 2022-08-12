@@ -1,0 +1,85 @@
+SIZE_LIMIT = 'Дек переполнен'
+EMPTY = 'Элементы в Деке отсутсвуют'
+
+
+class Deque:
+    def __init__(self, max_size):
+        self._elements = [None] * max_size
+        self._max_size = max_size
+        self._head = 0
+        self._tail = 0
+        self._size = 0
+
+    def is_empty(self):
+        return self._size == 0
+
+    def size_limit(self):
+        return self._size != self._max_size
+
+    def push_back(self, value):
+        if not self.size_limit():
+            raise IndexError(SIZE_LIMIT)
+        self._elements[self._tail] = value
+        self._tail = (self._tail + 1) % self._max_size
+        self._size += 1
+
+    def push_front(self, value):
+        if not self.size_limit():
+            raise IndexError(SIZE_LIMIT)
+        self._elements[self._head - 1] = value
+        self._head = (self._head - 1) % self._max_size
+        self._size += 1
+
+    def pop_back(self):
+        if self.is_empty():
+            raise IndexError(EMPTY)
+        x = self._elements[self._tail - 1]
+        self._elements[self._tail - 1] = None
+        self._tail = (self._tail - 1) % self._max_size
+        self._size -= 1
+        return x
+
+    def pop_front(self):
+        if self.is_empty():
+            raise IndexError(EMPTY)
+        x = self._elements[self._head]
+        self._elements[self._head] = None
+        self._head = (self._head + 1) % self._max_size
+        self._size -= 1
+        return x
+
+
+def deque(count_command, max_size):
+    deque = Deque(max_size)
+    output = []
+    commands_list = {
+        'push_front': deque.push_front,
+        'push_back': deque.push_back,
+        'pop_front': deque.pop_front,
+        'pop_back': deque.pop_back,
+    }
+
+    for _ in range(count_command):
+        commands = input()
+        command, *value = commands.split()
+        if value:
+            try:
+                result = commands_list[command](int(*value))
+                if result is not None:
+                    output.append(result)
+            except IndexError:
+                output.append('error')
+        else:
+            try:
+                result = commands_list[command]()
+                output.append(result)
+            except IndexError:
+                output.append('error')
+    for result in output:
+        print(result)
+
+
+if __name__ == '__main__':
+    count_command = int(input())
+    max_size = int(input())
+    deque(count_command, max_size)
