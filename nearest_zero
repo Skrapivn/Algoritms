@@ -1,0 +1,21 @@
+def nearest_zero(street_length, houses):
+    result = [0] * street_length
+    zeroes = [
+        index for index, value in enumerate(houses) if value == 0
+    ]
+
+    for house in range(zeroes[0]):
+        result[house] = zeroes[0] - house
+    for house in range(len(zeroes) - 1):
+        for pos in range(zeroes[house] + 1, zeroes[house + 1]):
+            result[pos] = min(pos - zeroes[house], zeroes[house + 1] - pos)
+    for house in range(zeroes[-1] + 1, street_length):
+        result[house] = house - zeroes[-1]
+
+    return result
+
+
+if __name__ == '__main__':
+    street_length = int(input())
+    houses = list(map(int, input().split()))
+    print(*nearest_zero(street_length, houses))
